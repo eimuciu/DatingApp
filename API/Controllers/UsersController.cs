@@ -1,22 +1,22 @@
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")] // /api/users
-
-    public class UsersController : ControllerBase
+    [Authorize]
+    public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
 
-        public UsersController(DataContext context) 
+        public UsersController(DataContext context)
         {
             _context = context;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -27,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id) 
+        public async Task<ActionResult<AppUser>> GetUser(int id)
         {
             // var user = _context.Users.Find(id); // to use Find() method primary key id has to be passed to the method. Alternatively if you want to find data by let's say name than different method will be used.
             var user = await _context.Users.FindAsync(id); //async version
