@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { User } from './_models/user';
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -8,15 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'Hello World!';
-  users: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private accountService: AccountService) {}
 
   ngOnInit(): void {
-    this.http.get('http://localhost:5279/api/users').subscribe({
-      next: (response) => this.users = response,
-      error: (error) => console.log(error),
-      complete: () => console.log('Request has completed'  ),
-    });
+    this.setCurrentUser();
+  }
+
+  setCurrentUser() {
+    // JSON.parse() complains because we are not guaranteed that there is an item in local storage
+    // We can switch the safety off by using ! at the end of localStorage.getItem('user')! method like so
+    // This switches off the safety since we as developers tell that we know exactly that the item exists
+    // const user: User = JSON.parse(localStorage.getItem('user'));
+
+    // Alternative approach is as follow
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+    const user: User = JSON.parse(userString);
+    this.accountService.setCurrentUser(user);
   }
 }
