@@ -1,5 +1,6 @@
 using API.Data;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,28 +10,23 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UsersController(DataContext context)
+        public UsersController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            // var users = _context.Users.ToList(); // if we are not making a query than we can specify ToList() method which will get a list of users from the databse.
-            var users = await _context.Users.ToListAsync(); // async version
-
-            return users;
+            return Ok(await _userRepository.GetUsersAsync());
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<AppUser>> GetUser(string username)
         {
-            // var user = _context.Users.Find(id); // to use Find() method primary key id has to be passed to the method. Alternatively if you want to find data by let's say name than different method will be used.
-            var user = await _context.Users.FindAsync(id); //async version
-            return user;
+            return await _userRepository.GetUserByUsernameAsync(username);
         }
     }
 }
