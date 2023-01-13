@@ -11,7 +11,7 @@ namespace API.Extensions
             var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             response.Headers.Add("Pagination", JsonSerializer.Serialize(header, jsonOptions));
             // Because it is a custom header we have to allow this header to be accessed by CORS
-            response.Headers.Add("Access-Control-Exponse-Headers", "Pagination");
+            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }
     }
 }
