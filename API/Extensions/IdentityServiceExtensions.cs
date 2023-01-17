@@ -17,6 +17,7 @@ namespace API.Extensions
                 opt.Password.RequireNonAlphanumeric = false;
                 
             })
+                .AddRoles<AppRole>()
                 .AddRoleManager<RoleManager<AppRole>>()
                 .AddEntityFrameworkStores<DataContext>();
 
