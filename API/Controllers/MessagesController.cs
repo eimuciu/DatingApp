@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
@@ -67,6 +68,28 @@ namespace API.Controllers
             var currentUsername = User.GetUserName();
 
             return Ok(await _messageRepository.GetMessageThread(currentUsername, userName));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMessage(int id)
+        {
+            var username = User.GetUserName();
+
+            var message = await _messageRepository.GetMessage(id);
+
+            if (message.SenderUsername != username && message.RecipientUsername != username) return Unauthorized();
+
+            if (message.SenderUsername == username) message.SenderDeleted = true;
+            if (message.RecipientUsername == username) message.RecipientDeleted = true;
+
+            if (message.SenderDeleted && message.RecipientDeleted)
+            {
+                _messageRepository.DeleteMessage(message);
+            }
+
+            if (await _messageRepository.SaveAllAsync()) return Ok();
+
+            return BadRequest("Problem deleting the message");
         }
     }
 }
