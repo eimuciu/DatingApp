@@ -42,12 +42,24 @@ namespace API.SignalR
         public Task<string[]> GetOnlineUsers()
         {
             string[] onlineUsers;
-            lock(OnlineUser)
+            lock (OnlineUser)
             {
                 onlineUsers = OnlineUser.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
             }
 
             return Task.FromResult(onlineUsers);
+        }
+
+        public static Task<List<string>> GetConnectionsForUser(string username)
+        {
+            List<string> connectionIds;
+
+            lock (OnlineUser)
+            {
+                connectionIds = OnlineUser.GetValueOrDefault(username);
+            }
+
+            return Task.FromResult(connectionIds);
         }
     }
 }
