@@ -3,10 +3,12 @@ using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
 {
+    [Authorize]
     public class MessageHub : Hub
     {
         private readonly IMessageRepository _messageRepository;
@@ -30,6 +32,7 @@ namespace API.SignalR
             var messages = await _messageRepository.GetMessageThread(Context.User.GetUserName(), otherUser);
 
             await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
