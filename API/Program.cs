@@ -30,6 +30,9 @@ app.UseCors(builder => builder
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles(); //this middleware fish out index.html in wwwroot folder by default
+app.UseStaticFiles(); // be default this will look for wwwroot and serve the content from there
+
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
